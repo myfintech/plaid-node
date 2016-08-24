@@ -329,26 +329,48 @@ Plaid.searchInstitutions = function(options, env, callback) {
 };
 
 function handleApiResponse(err, res, $body, includeMfaResponse, callback) {
+  var wholeResponse;
+
   if (res != null) {
     $body = R.assoc('statusCode', res.statusCode, $body);
   }
 
   if (includeMfaResponse) {
     if (err != null) {
-      callback(err, null, null);
-    } else if (res.statusCode === 200) {
+
+      wholeResponse = {
+        err: err, 
+        res: res, 
+        $body: $body
+      }
+
+      callback(wholeResponse, null, null);
+    } 
+    else if (res.statusCode === 200) {
       callback(null, null, $body);
-    } else if (res.statusCode === 201) {
+    } 
+    else if (res.statusCode === 201) {
       callback(null, $body, null);
-    } else {
+    } 
+    else {
       callback($body, null, null);
     }
-  } else {
+  } 
+
+  else {
     if (err != null) {
-      callback(err, null);
-    } else if (res.statusCode === 200) {
+      
+      wholeResponse = {
+        err: err, 
+        res: res, 
+        $body: $body
+      }
+      callback(wholeResponse, null);
+    } 
+    else if (res.statusCode === 200) {
       callback(null, $body);
-    } else {
+    } 
+    else {
       callback($body, null);
     }
   }
